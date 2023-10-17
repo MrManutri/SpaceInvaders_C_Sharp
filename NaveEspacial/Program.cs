@@ -1,9 +1,25 @@
 ﻿using NaveEspacial;
 using System.Drawing;
 
-Ventana ventana = new Ventana(170,45, ConsoleColor.Black,new Point(5,3), new Point(165,43));
-ventana.DibujarMarco();
+Ventana ventana;
+Nave nave;
+bool jugar = true;
 
 
-
+void Iniciar() 
+{
+    Ventana ventana = new Ventana(170, 45, ConsoleColor.Black, new Point(5, 3), new Point(165, 43));
+    ventana.DibujarMarco();
+    nave = new Nave(new Point(80, 30),ConsoleColor.White,ventana);
+    nave.Dibujar();
+}
+void Game()
+{
+    while (jugar)
+    {
+        nave.Mover(9);
+    }
+}
+Iniciar();
+Game();
 Console.ReadKey();
