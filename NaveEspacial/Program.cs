@@ -17,7 +17,10 @@ void Game()
 {
     while (jugar)
     {
-        nave.Mover(9);
+        nave.Mover(2);
+        nave.Disparar();
+        //Thread.Sleep(50);
+
     }
 }
 Iniciar();

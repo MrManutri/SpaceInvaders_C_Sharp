@@ -14,6 +14,7 @@ namespace NaveEspacial
         public ConsoleColor Color { get; set; }
         public Ventana VentanaC {  get; set; }
         public List<Point> PosicionesNave { get; set; }
+        public List<Bala> Balas {  get; set; } 
 
         public Nave(Point posicion, ConsoleColor color, Ventana ventanaC)
         {
@@ -22,6 +23,7 @@ namespace NaveEspacial
             Color = color;
             VentanaC = ventanaC;
             PosicionesNave = new List<Point>();
+            Balas = new List<Bala>();
         }
         public void Dibujar()
         {
@@ -34,7 +36,7 @@ namespace NaveEspacial
             Console.SetCursorPosition(x, y+1);
             Console.Write("█▄█☻█▄█");
             Console.SetCursorPosition(x, y+2);
-            Console.Write("█▀▀▓▀▀█");
+            Console.Write("█▀▀█▀▀█");
 
             PosicionesNave.Clear();
 
@@ -81,8 +83,41 @@ namespace NaveEspacial
 
             distancia.X *= velocidad;
             distancia.Y *= velocidad;
-            Posicion = new Point(Posicion.X+distancia.X,Posicion.Y+distancia.Y);
+
+            if(tecla.Key == ConsoleKey.RightArrow) 
+            {
+                Bala bala = new Bala(new Point(Posicion.X + 6, Posicion.Y + 2),
+                    ConsoleColor.Cyan, TipoBala.Normal);
+                Balas.Add(bala);
+            }
+            if (tecla.Key== ConsoleKey.LeftArrow) 
+            {
+                Bala bala = new Bala(new Point(Posicion.X,Posicion.Y+2),
+                    ConsoleColor.Green, TipoBala.Normal);
+                Balas.Add(bala);
+            }
+            if(tecla.Key==ConsoleKey.UpArrow)
+            {
+                Bala bala = new Bala(new Point(Posicion.X+2, Posicion.Y-2),
+                    ConsoleColor.Blue,TipoBala.Especial);
+                Balas.Add(bala);
+            }
             
+            
+        }
+        public void Colisiones(Point distancia)
+        {
+            Point posicionAux = new Point(Posicion.X + distancia.X, Posicion.Y + distancia.Y);
+            if(posicionAux.X <=VentanaC.LimiteSuperior.X)
+                posicionAux.X = VentanaC.LimiteSuperior.X+1;
+            if (posicionAux.X + 6 >= VentanaC.LimiteInferior.X)
+                posicionAux.X = VentanaC.LimiteInferior.X - 7;
+            if (posicionAux.Y <= VentanaC.LimiteSuperior.Y)
+                posicionAux.Y = VentanaC.LimiteSuperior.Y + 1;
+            if (posicionAux.Y + 2 >= VentanaC.LimiteInferior.Y)
+                posicionAux.Y = VentanaC.LimiteInferior.Y - 3;
+
+            Posicion = posicionAux;
         }
         public void Mover(int velocidad)
         {
@@ -91,7 +126,19 @@ namespace NaveEspacial
                 Borrar();
                 Point distancia = new Point();
                 Teclado(ref distancia, velocidad);
+                Colisiones(distancia);
                 Dibujar();
+            }
+        }
+        public void Disparar()
+        {
+            for (int i = 0; i < Balas.Count; i++)
+            {
+                if(Balas[i].Mover(1, VentanaC.LimiteSuperior.Y))
+                {
+                    Balas.Remove(Balas[i]);
+                }
+                
             }
         }
     }
